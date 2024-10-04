@@ -48,10 +48,11 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { name, email, address } = req.body; // Destructure address from the request body
         const userFields = {};
         if (name) userFields.name = name;
         if (email) userFields.email = email;
+        if (address) userFields.address = address; // Add address to userFields if it exists
 
         const user = await User.findByIdAndUpdate(
             req.params.id,
@@ -72,6 +73,7 @@ router.put('/:id', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
 
 router.delete('/:id', async (req, res) => {
     try {
