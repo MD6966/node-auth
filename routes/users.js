@@ -48,17 +48,17 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const { name, email, address } = req.body; // Destructure address from the request body
+        const { name, email, address } = req.body;
         const userFields = {};
         if (name) userFields.name = name;
         if (email) userFields.email = email;
-        if (address) userFields.address = address; // Add address to userFields if it exists
+        if (address) userFields.address = address;
 
         const user = await User.findByIdAndUpdate(
             req.params.id,
             { $set: userFields },
             { new: true, runValidators: true }
-        );
+        ).select('-password'); // Exclude password
 
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
