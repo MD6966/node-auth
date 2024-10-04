@@ -4,31 +4,27 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Helper function for sending error responses
 const sendError = (res, message) => {
   return res.status(400).json({ msg: message });
 };
 
+// Signup Route
 router.post('/signup', async (req, res) => {
   const { name, address, email, password } = req.body;
 
-  // Check for missing fields
   if (!name || !address || !email || !password) {
     return sendError(res, 'All fields (name, address, email, password) are required');
   }
 
   try {
-    // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
       return sendError(res, 'User already exists');
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user
     user = new User({
       name,
       address,
@@ -37,7 +33,6 @@ router.post('/signup', async (req, res) => {
     });
     await user.save();
 
-    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', {
       expiresIn: '1h'
     });
@@ -49,10 +44,10 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+// Login Route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  // Check for missing fields
   if (!email || !password) {
     return sendError(res, 'Email and password are required');
   }
@@ -73,6 +68,16 @@ router.post('/login', async (req, res) => {
     });
 
     res.json({ token });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server error');
+  }
+});
+
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find({}, '-password'); // Exclude the password field
+    res.status(200).json(users);
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server error');
