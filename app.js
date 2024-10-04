@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const authRoutes = require('./routes/auth'); // Import your authentication routes
-
+const authRoutes = require('./routes/auth'); 
+const userRoutes = require("./routes/users")
 const app = express();
 
 // Middleware to parse JSON
@@ -22,6 +22,7 @@ const connectDB = async () => {
 connectDB();
 
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.get("/", (req, res)=>{
   res.json({message:"Hello From server"})
 })
