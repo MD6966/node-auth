@@ -28,23 +28,23 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// router.post('/', async (req, res) => {
-//     try {
-//         const { name, email, password } = req.body;
+router.post('/create', async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
 
-//         const newUser = new User({
-//             name,
-//             email,
-//             password,
-//         });
+        const newUser = new User({
+            name,
+            email,
+            password,
+        });
 
-//         const user = await newUser.save();
-//         res.status(201).json(user);
-//     } catch (error) {
-//         console.error(error.message);
-//         res.status(500).send('Server error');
-//     }
-// });
+        const user = await newUser.save();
+        res.status(201).json(user);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+});
 
 router.put('/:id', async (req, res) => {
     try {
@@ -58,7 +58,7 @@ router.put('/:id', async (req, res) => {
             req.params.id,
             { $set: userFields },
             { new: true, runValidators: true }
-        ).select('-password'); // Exclude password
+        ).select('-password'); 
 
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
